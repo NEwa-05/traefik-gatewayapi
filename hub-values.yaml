@@ -1,0 +1,95 @@
+image:
+  registry: ghcr.io
+  repository: traefik/traefik-hub
+  tag: "v3"
+deployment:
+  replicas: 2
+ingressRoute:
+  dashboard:
+    enabled: false
+ingressClass:
+  enabled: false
+gateway:
+  enabled: true
+  name: "traefik"
+  listeners:
+    web:
+      port: 8000
+      protocol: TCP
+      namespacePolicy:  All
+    websecure:
+      port: 8443
+      protocol: TLS
+      namespacePolicy: All
+      certificateRefs: 
+        - kind: Secret
+          name: wildcard-mageekbox
+      mode: Passthrough
+gatewayClass:
+  enabled: true
+  name: traefik
+providers:
+  kubernetesCRD:
+    enabled: true
+    allowCrossNamespace: true
+    allowExternalNameServices: true
+    allowEmptyServices: true
+  kubernetesIngress:
+    enabled: true
+    allowExternalNameServices: true
+    allowEmptyServices: true
+  kubernetesGateway:
+      enabled: true
+      experimentalChannel: true
+      namespaces: []
+logs:
+  general:
+    format: json
+    level: DEBUG
+  access:
+    enabled: true
+    format: json
+    addInternals: true
+    fields:
+      general:
+        defaultmode: keep
+      headers:
+        defaultmode: keep
+affinity:
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+      - podAffinityTerm:
+          labelSelector:
+            matchExpressions:
+              - key: "app.kubernetes.io/name"
+                operator: In
+                values:
+                  - traefik
+          topologyKey: kubernetes.io/hostname
+        weight: 100
+tlsStore:
+  default:
+    defaultCertificate:
+      secretName: wildcard-mageekbox
+env:
+- name: GANDIV5_API_KEY
+  valueFrom:
+    secretKeyRef:
+      name: dnsapikey
+      key: token
+- name: LEGO_DISABLE_CNAME_SUPPORT
+  value: "true"
+resources:
+  requests:
+    memory: 256Mi
+    cpu: 100m
+  limits:
+    memory: 256Mi
+    cpu: 100m
+hub:
+  token: hub-license
+  apimanagement:
+    enabled: false
+experimental:
+  kubernetesGateway:
+    enabled: true
