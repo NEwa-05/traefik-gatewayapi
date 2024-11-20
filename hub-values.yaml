@@ -15,16 +15,16 @@ gateway:
   listeners:
     web:
       port: 8000
-      protocol: TCP
+      protocol: HTTP
       namespacePolicy:  All
     websecure:
       port: 8443
-      protocol: TLS
+      protocol: HTTPS
       namespacePolicy: All
       certificateRefs: 
         - kind: Secret
           name: wildcard-mageekbox
-      mode: Passthrough
+          namespace: traefik
 gatewayClass:
   enabled: true
   name: traefik
