@@ -1,0 +1,19 @@
+---
+apiVersion: gateway.networking.k8s.io/v1alpha2
+kind: TLSRoute
+metadata:
+  name: whoami-tlsroute
+  namespace: apps
+spec:
+  parentRefs:
+    - name: traefik
+      namespace: traefik
+      sectionName: websecuretcp
+      kind: Gateway
+  hostnames:
+    - whoamitls.dbl24tst5w47.mageekbox.eu
+  rules:
+    - backendRefs:
+        - name: whoami-tcp
+          namespace: apps
+          port: 3000

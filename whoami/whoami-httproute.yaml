@@ -1,0 +1,19 @@
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: whoami-httproute
+  namespace: apps
+spec:
+  parentRefs:
+    - name: traefik
+      namespace: traefik
+      sectionName: web
+      kind: Gateway
+  hostnames:
+    - whoamihttp.dbl24tst5w47.mageekbox.eu
+  rules:
+    - backendRefs:
+        - name: whoami
+          namespace: apps
+          port: 80

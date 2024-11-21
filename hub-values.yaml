@@ -17,6 +17,10 @@ gateway:
       port: 8000
       protocol: HTTP
       namespacePolicy:  All
+    webtcp:
+      port: 8000
+      protocol: TCP
+      namespacePolicy:  All
     websecure:
       port: 8443
       protocol: HTTPS
@@ -25,6 +29,15 @@ gateway:
         - kind: Secret
           name: wildcard-mageekbox
           namespace: traefik
+    websecuretcp:
+      port: 8443
+      protocol: TLS
+      namespacePolicy: All
+      certificateRefs: 
+        - kind: Secret
+          name: wildcard-mageekbox
+          namespace: traefik
+      mode: Terminate
 gatewayClass:
   enabled: true
   name: traefik
